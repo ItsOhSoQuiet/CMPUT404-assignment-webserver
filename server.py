@@ -30,8 +30,44 @@ import os # to handle finding files and directories
 
 class MyWebServer(socketserver.BaseRequestHandler):
 
-    # This serves the file at a certain filepath.
-    def serveFile(self, filePath):
+    """
+        This checks if the file can be reached.
+        If it can, serve the file. If not, send 404.
+    """
+    def checkIfCanGet(self, request_array):
+        '''
+            Need to get the path that the files to
+            display are in. 
+
+            We are not allowed to hardcode, so we need
+            to get the current directory that we're in.
+
+            https://www.techcoil.com/blog/how-to-get-the-directory-path-of-a-python-3-script-from-within-itself/
+        '''
+        serverDirectory = os.path.dirname(os.path.realpath(__file__))
+
+        # Get path to file, checks if it exists, serve if yes, 404 if no
+        filepath = serverDirectory + "/www" + request_array[1]
+        print(filepath)
+        if os.path.exists('/home/student/Assignments/Assignment1/CMPUT404-assignment-webserver/www/deep'):
+            print("Without slash success")
+        if os.path.exists('/home/student/Assignments/Assignment1/CMPUT404-assignment-webserver/www/deep/'):
+            print("With slash success")
+
+        '''
+            Need to check if file exists.
+            If it doesn't exist, give a 404 response.
+            If it does exist, check if it's a folder.
+            If it is a folder, check if it has a slash at the end
+            If there isn't one, add it, so we can easily access the
+            HTML file. 
+
+            https://www.techcoil.com/blog/how-to-get-the-directory-path-of-a-python-3-script-from-within-itself/
+            https://dbader.org/blog/python-check-if-file-exists
+            https://stackoverflow.com/questions/3204782/how-to-check-if-a-file-is-a-directory-or-regular-file-in-python
+        '''
+    
+    def serveFile(self, request_array):
         pass
 
     def serve404(self):
@@ -69,6 +105,29 @@ class MyWebServer(socketserver.BaseRequestHandler):
         print(type(element_table[0]))
         print(type(element_table[0].decode('utf-8')))
         print(element_table[0].decode('utf-8'))
+        for element in element_table:
+            element.decode('utf-8')
+        print(element_table)
+
+        '''
+            Take request, split it into an array, and decode each element into strings.
+            Check if the method of the request has "GET" or not,
+            then we can serve the correct response.
+            Forgot about list comprehensions.
+            https://stackoverflow.com/questions/3371269/call-int-function-on-every-list-element
+        '''
+        request_array = [ element.decode('utf-8') for element in self.data.split() ]
+        print(request_array)
+        method = request_array[0]
+        print(len(method))
+        print(type(method))
+        if method != "GET":
+            self.serve405()
+            print("405")
+        else:
+            self.checkIfCanGet(request_array)
+            print("Success!")
+
 
         # This code sends back just the word OK.
         self.request.sendall(bytearray("OK",'utf-8'))
