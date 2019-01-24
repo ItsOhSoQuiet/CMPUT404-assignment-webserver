@@ -1,7 +1,8 @@
 #  coding: utf-8 
 import socketserver
+import os # to handle finding files and directories
 
-# Copyright 2013 Abram Hindle, Eddie Antonio Santos
+# Copyright 2013, 2018 Abram Hindle, Eddie Antonio Santos, Matthew Kluk
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,14 +29,52 @@ import socketserver
 
 
 class MyWebServer(socketserver.BaseRequestHandler):
+
+    # This serves the file at a certain filepath.
+    def serveFile(self, filePath):
+        pass
+
+    def serve404(self):
+        pass
     
+    def serve405(self):
+        pass
+
+    
+    # According to https://docs.python.org/2/library/socketserver.html,
+    # This is to do all of the work required to service a request
     def handle(self):
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
+        # print ("Got a request of: %s\n" % self.data)
+
+        '''
+            This code sees how the request data is represented
+            in Python
+        '''
+        print(self.data)
+        print(type(self.data))
+        '''
+            This code was used to identify the different parts
+            of the HTML request
+        '''
+        element_table = self.data.split()
+        for element in element_table:
+            print(element, element_table.index(element))
+
+        '''
+            This code was me looking at converting byte
+            literals to strings, inspired by this link
+            https://stackoverflow.com/questions/6269765/what-does-the-b-character-do-in-front-of-a-string-literal
+        '''
+        print(type(element_table[0]))
+        print(type(element_table[0].decode('utf-8')))
+        print(element_table[0].decode('utf-8'))
+
+        # This code sends back just the word OK.
         self.request.sendall(bytearray("OK",'utf-8'))
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 8080
+    HOST, PORT = "localhost", 8080 # will run on http://127.0.0.1:8080
 
     socketserver.TCPServer.allow_reuse_address = True
     # Create the server, binding to localhost on port 8080
