@@ -111,7 +111,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
         # https://www.tutorialspoint.com/http/http_responses.htm
         text = "<html><head>\r\n<title>404 Not Found</title>" + \
         "\r\n</head><body>\r\n<h1>Not Found</h1>\r\n<p>The " + \
-        "requested URL was not found</p>\r\n</body></html>"
+        "requested URL was not found.</p>\r\n</body></html>"
 
         self.sendResponse(code, mime_type, text) 
     
