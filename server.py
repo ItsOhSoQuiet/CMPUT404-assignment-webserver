@@ -95,11 +95,17 @@ class MyWebServer(socketserver.BaseRequestHandler):
         # Get the status code
         code = "200 OK"
 
-        # Read in the HTML/CSS
-        with open(filepath, 'r') as read_file:
-            text = read_file.read()
+        # Need to deal with confused folders, like /../../../../something_we_don't want
+        try:
+            # Read in the HTML/CSS
+            with open(filepath, 'r') as read_file:
+                text = read_file.read()
+            
+            self.sendResponse(code, mime_type, text)
+        except Exception:
+            self.serve404()
 
-        self.sendResponse(code, mime_type, text)
+        # self.sendResponse(code, mime_type, text)
 
     # Get the 404 code and HTML message
     def serve404(self):
