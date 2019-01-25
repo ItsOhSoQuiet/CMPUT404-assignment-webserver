@@ -130,11 +130,15 @@ class MyWebServer(socketserver.BaseRequestHandler):
     # Python formatting found at:
     # https://realpython.com/python-string-formatting/
     def sendResponse(self, code, mime_type, text):
-        httpResponse = "HTTP/1.1 " + code + "\r\n" + \
-        "Content-Length: " + str(len(text)) + "\r\n" + \
-        "Content-Type: " + mime_type + "\r\n" + \
+        httpResponse = "HTTP/1.1 {code}\r\n" + \
+        "Content-Length: {length}\r\n" + \
+        "Content-Type: {mime}\r\n" + \
         "Connection: Closed\r\n\r\n" + \
-        text + "\r\n"
+        "{text}\r\n"
+
+        httpResponse = httpResponse.format(code=code,
+                        length=str(len(text)), mime=mime_type,
+                        text=text)
 
         # finally send the response to the client
         self.request.sendall(httpResponse.encode())
